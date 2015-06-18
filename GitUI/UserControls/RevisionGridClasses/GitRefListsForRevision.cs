@@ -53,9 +53,13 @@ namespace GitUI.UserControls.RevisionGridClasses
             return AllBranches.Where(head => !head.IsRemote).Select(b => b.Name).ToArray();
         }
 
-        public string[] GetAllTagNames()
+        public string[] GetTagNames( bool lightweightOnly )
         {
-            return AllTags.Select(t => t.Name).ToArray();
+            IEnumerable<GitRef> tagsToReturn = AllTags;
+            if (lightweightOnly)
+                tagsToReturn = tagsToReturn.Where(rf => !rf.IsDereference);
+
+            return tagsToReturn.Select(t => t.Name).ToArray();
         }
     }
 }

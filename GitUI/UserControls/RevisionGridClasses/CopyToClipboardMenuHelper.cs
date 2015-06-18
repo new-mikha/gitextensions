@@ -8,42 +8,45 @@ namespace GitUI.UserControls.RevisionGridClasses
 {
     class CopyToClipboardMenuHelper
     {
+        public static readonly string TempItemFlag = "tempItem";
+
         /// <summary>
         /// ...
         /// sets also the visibility of captionItem
         /// ...
         /// </summary>
-        /// <param name="targetMenu"></param>
-        /// <param name="captionItem"></param>
-        /// <param name="gitNameList"></param>
-        /// <param name="itemFlag"></param>
         public static void SetCopyToClipboardMenuItems(
             ToolStripMenuItem targetMenu,
             ToolStripMenuItem captionItem,
-            string[] gitNameList,
-            string itemFlag)
+            string[] gitNameList)
         {
-            // remove previous items
-            targetMenu.DropDownItems.OfType<ToolStripMenuItem>()
-                .Where(item => (item.Tag as string) == itemFlag)
-                .ToArray()
-                .ForEach(item => targetMenu.DropDownItems.Remove(item));
-
             // insert items
-            var branchNameItemInsertAfter = captionItem;
-            gitNameList.ForEach(branchName =>
+            var itemInsertAfter = captionItem;
+            gitNameList.ForEach(gitName =>
             {
-                var branchNameItem = new ToolStripMenuItem(branchName);
-                branchNameItem.Tag = itemFlag; // to delete items from previous opening
-                branchNameItem.Click += CopyToClipBoard;
-                int insertAfterIndex = targetMenu.DropDownItems.IndexOf(branchNameItemInsertAfter);
-                targetMenu.DropDownItems.Insert(insertAfterIndex + 1, branchNameItem);
-                branchNameItemInsertAfter = branchNameItem;
+                var gitNameItem = new ToolStripMenuItem(gitName);
+                gitNameItem.Tag = TempItemFlag; // to delete items from previous opening
+                gitNameItem.Click += CopyToClipBoard;
+                int insertAfterIndex = targetMenu.DropDownItems.IndexOf(itemInsertAfter);
+                targetMenu.DropDownItems.Insert(insertAfterIndex + 1, gitNameItem);
+                itemInsertAfter = gitNameItem;
             });
 
             // visibility of caption
             // TODO: why is the Visible property always false when it is read from?
             captionItem.Visible = gitNameList.Any();
+        }
+
+        /// <summary>
+        /// Remove menu items added earlier by the public methods of this class, 
+        /// and those having <see cref="TempItemFlag"/> as the Tag.
+        /// </summary>
+        public static void RemoveTempItems(ToolStripMenuItem targetMenu)
+        {
+            targetMenu.DropDownItems.OfType<ToolStripMenuItem>()
+                .Where(item => (item.Tag as string) == TempItemFlag)
+                .ToArray()
+                .ForEach(item => targetMenu.DropDownItems.Remove(item));
         }
 
         private static void CopyToClipBoard(object sender, EventArgs e)

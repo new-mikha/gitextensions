@@ -7308,9 +7308,17 @@ If this is a central repository (bare repository without a working directory):
         <source>Stop bisect</source>
         
       </trans-unit>
-      <trans-unit id="tagNameCopyToolStripMenuItem.Text">
+      <trans-unit id="_commonTagNameMenuCaption.Text">
         <source>Tag name:</source>
         
+      </trans-unit>
+      <trans-unit id="_lightweightTagNameMenuCaption.Text">
+        <source>Lightweight tag:</source>
+
+      </trans-unit>
+      <trans-unit id="_annotatedTagNameMenuCaption.Text">
+        <source>Annotated tag:</source>
+
       </trans-unit>
       <trans-unit id="viewToolStripMenuItem.Text">
         <source>View</source>

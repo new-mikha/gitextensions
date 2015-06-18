@@ -54,6 +54,13 @@ namespace GitUI
         private readonly TranslationString _cannotHighlightSelectedBranch = new TranslationString("Cannot highlight selected branch when revision graph is loading.");
         private readonly TranslationString _noRevisionFoundError = new TranslationString("No revision found.");
 
+        private readonly TranslationString _commonTagNameMenuCaption = new TranslationString("Tag name:");
+        private readonly TranslationString _lightweightTagNameMenuCaption = new TranslationString("Lightweight tag:");
+        private readonly TranslationString _annotatedTagNameMenuCaption = new TranslationString("Annotated tag:");
+        private readonly TranslationString _nameOnlyMenuCaption = new TranslationString("Name only");
+        private readonly TranslationString _messageOnlyMenuCaption = new TranslationString("Message only");
+        private readonly TranslationString _nameAndMessageMenuCaption = new TranslationString("Name and message");
+
         private const int NodeDimension = 8;
         private const int LaneWidth = 13;
         private const int LaneLineWidth = 2;
@@ -991,8 +998,11 @@ namespace GitUI
                 else
                     revGraphIMF = filterBarIMF;
 
-                _revisionGraphCommand = new RevisionGraph(Module) { BranchFilter = BranchFilter,
-                    RefsOptions = _refsOptions, Filter = _revisionFilter.GetFilter() + Filter + FixedFilter
+                _revisionGraphCommand = new RevisionGraph(Module)
+                {
+                    BranchFilter = BranchFilter,
+                    RefsOptions = _refsOptions,
+                    Filter = _revisionFilter.GetFilter() + Filter + FixedFilter
                 };
                 _revisionGraphCommand.Updated += GitGetCommitsCommandUpdated;
                 _revisionGraphCommand.Exited += GitGetCommitsCommandExited;
@@ -1457,10 +1467,10 @@ namespace GitUI
                                 superprojectRefs.Remove(superprojectRef);
 
                             string name = gitRef.Name;
-                            if ( gitRef.IsTag
+                            if (gitRef.IsTag
                                  && gitRef.IsDereference // see note on using IsDereference in CommitInfo class.
                                  && AppSettings.ShowAnnotatedTagsMessages
-                                 && AppSettings.ShowIndicatorForMultilineMessage )
+                                 && AppSettings.ShowIndicatorForMultilineMessage)
                             {
                                 name = name + "  " + MultilineMessageIndicator;
                             }
@@ -2164,19 +2174,25 @@ namespace GitUI
             // clipboard branch and tag menu handling
             {
                 branchNameCopyToolStripMenuItem.Tag = "caption";
-                tagNameCopyToolStripMenuItem.Tag = "caption";
+                commonTagCopyToolStripMenuItem.Tag = "caption";
+                annotatedTagCopyToolStripMenuItem.Tag = "caption";
                 MenuUtil.SetAsCaptionMenuItem(branchNameCopyToolStripMenuItem, mainContextMenu);
-                MenuUtil.SetAsCaptionMenuItem(tagNameCopyToolStripMenuItem, mainContextMenu);
+                MenuUtil.SetAsCaptionMenuItem(commonTagCopyToolStripMenuItem, mainContextMenu);
+                MenuUtil.SetAsCaptionMenuItem(annotatedTagCopyToolStripMenuItem, mainContextMenu);
+
+                CopyToClipboardMenuHelper.RemoveTempItems(copyToClipboardToolStripMenuItem);
 
                 var branchNames = gitRefListsForRevision.GetAllBranchNames();
                 CopyToClipboardMenuHelper.SetCopyToClipboardMenuItems(
-                    copyToClipboardToolStripMenuItem, branchNameCopyToolStripMenuItem, branchNames, "branchNameItem");
+                    copyToClipboardToolStripMenuItem, branchNameCopyToolStripMenuItem, branchNames);
 
-                var tagNames = gitRefListsForRevision.GetAllTagNames();
+                var tagNames = gitRefListsForRevision.GetTagNames(AppSettings.ShowAnnotatedTagsMessages);
                 CopyToClipboardMenuHelper.SetCopyToClipboardMenuItems(
-                    copyToClipboardToolStripMenuItem, tagNameCopyToolStripMenuItem, tagNames, "tagNameItem");
+                    copyToClipboardToolStripMenuItem, commonTagCopyToolStripMenuItem, tagNames);
 
-                toolStripSeparator6.Visible = branchNames.Any() || tagNames.Any();
+                bool haveAnnotatedTags = SetupAnnotatedTagsCopying(gitRefListsForRevision);
+
+                toolStripSeparator6.Visible = branchNames.Any() || tagNames.Any() || haveAnnotatedTags;
             }
 
             foreach (var head in allBranches)
@@ -2235,9 +2251,77 @@ namespace GitUI
             cherryPickCommitToolStripMenuItem.Enabled = !bareRepository;
             manipulateCommitToolStripMenuItem.Enabled = !bareRepository;
 
-            toolStripSeparator6.Enabled = branchNameCopyToolStripMenuItem.Enabled || tagNameCopyToolStripMenuItem.Enabled;
+            toolStripSeparator6.Enabled =
+                branchNameCopyToolStripMenuItem.Enabled ||
+                commonTagCopyToolStripMenuItem.Enabled ||
+                annotatedTagCopyToolStripMenuItem.Enabled;
 
             RefreshOwnScripts();
+        }
+
+        private bool SetupAnnotatedTagsCopying(GitRefListsForRevision gitRefListsForRevision)
+        {
+            if (!AppSettings.ShowAnnotatedTagsMessages)
+            {
+                annotatedTagCopyToolStripMenuItem.Visible = false;
+                commonTagCopyToolStripMenuItem.Text = _commonTagNameMenuCaption.Text;
+                return false;
+            }
+
+            commonTagCopyToolStripMenuItem.Text = _lightweightTagNameMenuCaption.Text;
+            annotatedTagCopyToolStripMenuItem.Text = _annotatedTagNameMenuCaption.Text;
+
+            GitRef[] annotatedTags = gitRefListsForRevision.AllTags.Where(gitRef => gitRef.IsDereference).ToArray();
+            bool haveAnnotatedTags = annotatedTags.Length > 0;
+            annotatedTagCopyToolStripMenuItem.Visible = haveAnnotatedTags;
+
+            // insert items
+            var itemInsertAfter = annotatedTagCopyToolStripMenuItem;
+            foreach (GitRef annotatedTagRef in annotatedTags)
+            {
+                var tagRootMenuItem = new ToolStripMenuItem(annotatedTagRef.Name);
+                tagRootMenuItem.Tag = CopyToClipboardMenuHelper.TempItemFlag; // to delete items later
+                int insertAfterIndex = copyToClipboardToolStripMenuItem.DropDownItems.IndexOf(itemInsertAfter);
+                copyToClipboardToolStripMenuItem.DropDownItems.Insert(insertAfterIndex + 1, tagRootMenuItem);
+                itemInsertAfter = tagRootMenuItem;
+
+                // should be not the iterating variable, but a local one - otherwise lambda below wouldn't work properly.
+                // (see "Access to foreach variable in closure" warning)
+                GitRef thisTagRef = annotatedTagRef;
+
+                {
+                    var nameOnlyMenuItem = new ToolStripMenuItem(_nameOnlyMenuCaption.Text);
+                    tagRootMenuItem.DropDownItems.Add(nameOnlyMenuItem);
+                    nameOnlyMenuItem.Click += new EventHandler((sender, args) => Clipboard.SetText(thisTagRef.Name));
+                }
+
+                {
+                    var messageOnlyMenuItem = new ToolStripMenuItem(_messageOnlyMenuCaption.Text);
+                    tagRootMenuItem.DropDownItems.Add(messageOnlyMenuItem);
+                    messageOnlyMenuItem.Click += 
+                        new EventHandler(
+                            (sender, args) => 
+                                Clipboard.SetText(Module.GetTagMessage(thisTagRef.Name))
+                        );
+                }
+
+                {
+                    var nameAndMessageMenuItem = new ToolStripMenuItem(_nameAndMessageMenuCaption.Text);
+                    tagRootMenuItem.DropDownItems.Add(nameAndMessageMenuItem);
+                    nameAndMessageMenuItem.Click +=
+                        new EventHandler(
+                            (sender, args) =>
+                                Clipboard.SetText(
+                                    thisTagRef.Name + ": " +
+                                    Module.GetTagMessage(thisTagRef.Name)
+                                )
+                        );
+                }
+
+
+            };
+
+            return haveAnnotatedTags;
         }
 
         private void ToolStripItemClickDeleteTag(object sender, EventArgs e)
@@ -2447,7 +2531,7 @@ namespace GitUI
 
             if (filtredCurrentCheckout == rev.Guid && ShowUncommitedChanges())
             {
-                CheckUncommitedChanged( filtredCurrentCheckout );
+                CheckUncommitedChanged(filtredCurrentCheckout);
             }
 
             var dataType = DvcsGraph.DataType.Normal;

@@ -8936,10 +8936,18 @@ Wenn dies ein zentralisiertes Repository ist (ein sogenanntes Bare Repository):
         <target>Bisect stoppen</target>
         
       </trans-unit>
-      <trans-unit id="tagNameCopyToolStripMenuItem.Text">
+      <trans-unit id="_commonTagNameMenuCaption.Text">
         <source>Tag name:</source>
         <target>Tag Name:</target>
         
+      </trans-unit>
+      <trans-unit id="_lightweightTagNameMenuCaption.Text">
+        <source>Lightweight tag:</source>
+
+      </trans-unit>
+      <trans-unit id="_annotatedTagNameMenuCaption.Text">
+        <source>Annotated tag:</source>
+
       </trans-unit>
       <trans-unit id="viewToolStripMenuItem.Text">
         <source>View</source>

@@ -2625,7 +2625,7 @@ namespace GitCommands
             if (info.Length == 0)
                 return null;
 
-            return info;
+            return info.Replace("\r\n", "\n").Replace("\n", "\r\n");
         }
 
         /// <summary>

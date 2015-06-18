@@ -8960,10 +8960,18 @@ Jeżeli to centralne repozytorium (nagie repozytorium - bez katalogu roboczego):
         <target>Zatrzymaj skanowanie</target>
         
       </trans-unit>
-      <trans-unit id="tagNameCopyToolStripMenuItem.Text">
+      <trans-unit id="_commonTagNameMenuCaption.Text">
         <source>Tag name:</source>
         <target>Nazwa tagu:</target>
         
+      </trans-unit>
+      <trans-unit id="_lightweightTagNameMenuCaption.Text">
+        <source>Lightweight tag:</source>
+
+      </trans-unit>
+      <trans-unit id="_annotatedTagNameMenuCaption.Text">
+        <source>Annotated tag:</source>
+
       </trans-unit>
       <trans-unit id="viewToolStripMenuItem.Text">
         <source>View</source>

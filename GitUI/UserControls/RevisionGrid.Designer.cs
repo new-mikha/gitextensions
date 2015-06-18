@@ -89,7 +89,8 @@ namespace GitUI
             this.hashCopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.branchNameCopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tagNameCopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.commonTagCopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.annotatedTagCopyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.checkoutBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mergeBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -314,7 +315,8 @@ namespace GitUI
             //
             this.copyToClipboardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.branchNameCopyToolStripMenuItem,
-            this.tagNameCopyToolStripMenuItem,
+            this.commonTagCopyToolStripMenuItem,
+            this.annotatedTagCopyToolStripMenuItem,
             this.toolStripSeparator6,
             this.hashCopyToolStripMenuItem,
             this.messageCopyToolStripMenuItem,
@@ -367,12 +369,19 @@ namespace GitUI
             this.branchNameCopyToolStripMenuItem.Text = "Branch name:";
             this.branchNameCopyToolStripMenuItem.Enabled = false;
             //
-            // tagToolStripMenuItem
+            // commonTagCopyToolStripMenuItem
             //
-            this.tagNameCopyToolStripMenuItem.Name = "tagToolStripMenuItem";
-            this.tagNameCopyToolStripMenuItem.Size = new System.Drawing.Size(165, 24);
-            this.tagNameCopyToolStripMenuItem.Text = "Tag name:";
-            this.tagNameCopyToolStripMenuItem.Enabled = false;
+            this.commonTagCopyToolStripMenuItem.Name = "commonTagCopyToolStripMenuItem";
+            this.commonTagCopyToolStripMenuItem.Size = new System.Drawing.Size(165, 24);
+            this.commonTagCopyToolStripMenuItem.Text = "Lightweight tag:";
+            this.commonTagCopyToolStripMenuItem.Enabled = false;
+            //
+            // annotatedTagCopyToolStripMenuItem
+            //
+            this.annotatedTagCopyToolStripMenuItem.Name = "annotatedTagCopyToolStripMenuItem";
+            this.annotatedTagCopyToolStripMenuItem.Size = new System.Drawing.Size(165, 24);
+            this.annotatedTagCopyToolStripMenuItem.Text = "Annotated tag:";
+            this.annotatedTagCopyToolStripMenuItem.Enabled = false;
             //
             // toolStripSeparator8
             //
@@ -748,7 +757,8 @@ namespace GitUI
         private System.Windows.Forms.ToolStripMenuItem copyToClipboardToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.ToolStripMenuItem branchNameCopyToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem tagNameCopyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem commonTagCopyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem annotatedTagCopyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem messageCopyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem authorCopyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dateCopyToolStripMenuItem;

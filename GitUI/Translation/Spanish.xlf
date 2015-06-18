@@ -8907,10 +8907,18 @@ Si se trata de un repositorio central (repositorio sin un directorio de trabajo)
         <target>Detener bisección</target>
         
       </trans-unit>
-      <trans-unit id="tagNameCopyToolStripMenuItem.Text">
+      <trans-unit id="_commonTagNameMenuCaption.Text">
         <source>Tag name:</source>
         <target>Nombre de la etiqueta:</target>
         
+      </trans-unit>
+      <trans-unit id="_lightweightTagNameMenuCaption.Text">
+        <source>Lightweight tag:</source>
+
+      </trans-unit>
+      <trans-unit id="_annotatedTagNameMenuCaption.Text">
+        <source>Annotated tag:</source>
+
       </trans-unit>
       <trans-unit id="viewToolStripMenuItem.Text">
         <source>View</source>

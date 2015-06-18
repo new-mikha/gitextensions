@@ -8864,10 +8864,18 @@ Als dit een centrale opslagplaats is (zonder werk directory)
         <target>Stop verdeel en heers</target>
         
       </trans-unit>
-      <trans-unit id="tagNameCopyToolStripMenuItem.Text">
+      <trans-unit id="_commonTagNameMenuCaption.Text">
         <source>Tag name:</source>
         <target>Label naam:</target>
         
+      </trans-unit>
+      <trans-unit id="_lightweightTagNameMenuCaption.Text">
+        <source>Lightweight tag:</source>
+
+      </trans-unit>
+      <trans-unit id="_annotatedTagNameMenuCaption.Text">
+        <source>Annotated tag:</source>
+
       </trans-unit>
       <trans-unit id="viewToolStripMenuItem.Text">
         <source>View</source>
